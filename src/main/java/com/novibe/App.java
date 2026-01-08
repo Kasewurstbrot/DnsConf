@@ -3,6 +3,7 @@ package com.novibe;
 
 import com.novibe.common.DnsTaskRunner;
 import com.novibe.common.config.EnvironmentVariables;
+import com.novibe.common.util.Log;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
@@ -15,7 +16,12 @@ public class App {
         String dnsBasePackage = switch (provider) {
             case "CLOUDFLARE" -> "com.novibe.dns.cloudflare";
             case "NEXTDNS" -> "com.novibe.dns.next_dns";
-            default -> throw new IllegalArgumentException("Unsupported DNS provider! Must be CLOUDFLARE or NEXTDNS");
+            default -> {
+                Log.fail(
+                "Unsupported DNS provider! Must be CLOUDFLARE or NEXTDNS. Was: " + provider);
+                System.exit(1);
+                yield null;
+            }
         };
 
         AnnotationConfigApplicationContext context =
